@@ -1,0 +1,62 @@
+
+name: playwright-tests-execution
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+
+env: 
+  TEST_ENV: Staging
+
+permissions:
+  contents: read
+
+
+
+jobs:
+  
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: checkout my repository
+        uses: actions/checkout@v4
+
+      - name: setup or install python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: install dependencies
+        run: |
+          python -m pip install .
+      - name: install playwright browsers
+        run: python -m playwright install --with-deps chromium
+
+      - name: run the tests
+        run: |
+          python -m pytest -n auto \
+          --browser chromium \
+          --screenshot only-on-failure \
+          --tracing retain-on-failure \
+          --output=test-results \
+          --junitxml=pytest-results.xml
+
+      - name: upload test artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: |
+            test-results/
+            pytest-results.xml
+          if-no-files-found: ignore
+
+
+
+
+

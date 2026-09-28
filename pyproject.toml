@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "test-automation"
+version = "0.1.0"
+description = "Python pytest and Playwright test suite"
+requires-python = ">=3.12"
+dependencies = [
+    "playwright==1.63.0",
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+    "pytest-playwright-asyncio==0.9.0",
+    "pytest-xdist==3.8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["ui"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
